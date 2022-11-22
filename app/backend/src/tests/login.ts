@@ -30,7 +30,7 @@ describe('Seu teste', () => {
 
   it('deve ser retornado um status 200 e um token caso o login seja válido', async () => {
     const validUser = {
-      username: "mock user",
+      email: "mock user",
       password: "secret_admin"
     };
 
@@ -43,7 +43,7 @@ describe('Seu teste', () => {
     expect(chaiHttpResponse.body).to.haveOwnProperty('token');
   });
 
-  it('deve ser retornado um status de 400 caso nenhum usuario seja fornecido', async () => {
+  it('deve ser retornado um status de 400 caso nenhum email seja fornecido', async () => {
     const invalidUser = {
       password: "any password"
     };
@@ -60,7 +60,7 @@ describe('Seu teste', () => {
 
   it('deve ser retornado um status de 400 caso nenhuma senha seja fornecida', async () => {
     const invalidUser = {
-      username: "any user"
+      email: "any email"
     };
 
     chaiHttpResponse = await chai
@@ -80,7 +80,7 @@ describe('Seu teste', () => {
       .resolves(null);
 
     const validUser = {
-      username: "not a user",
+      email: "not a user",
       password: "secret_admin"
     };
 
@@ -96,7 +96,7 @@ describe('Seu teste', () => {
 
   it('deve ser retornado um status de 401 caso a senha informada não esteja correta', async () => {
     const validUser = {
-      username: "correct_user",
+      email: "correct_user",
       password: "incorrect_password"
     };
 
