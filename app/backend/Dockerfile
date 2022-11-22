@@ -3,7 +3,5 @@ WORKDIR /app-backend
 COPY package* ./
 RUN ["npm", "install"]
 COPY . .
-RUN npx tsc
 EXPOSE 3001
-ENTRYPOINT [ "npm", "start" ]
-
+CMD ["npm", "start"]
