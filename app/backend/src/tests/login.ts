@@ -1,0 +1,112 @@
+import * as sinon from 'sinon';
+import * as chai from 'chai';
+// @ts-ignore
+import chaiHttp = require('chai-http');
+
+import App from '../app';
+import User from '../database/models/User';
+import userMocks from './mocks/user.mocks';
+
+import { Response } from 'superagent';
+
+chai.use(chaiHttp);
+
+const { app } = new App();
+
+const { expect } = chai;
+
+describe('Seu teste', () => {
+  let chaiHttpResponse: Response;
+
+  before(async () => {
+    sinon
+      .stub(User, "findOne")
+      .resolves(userMocks.oneUser as User);
+  });
+
+  after(()=>{
+    (User.findOne as sinon.SinonStub).restore();
+  })
+
+  it('deve ser retornado um status 200 e um token caso o login seja válido', async () => {
+    const validUser = {
+      username: "mock user",
+      password: "secret_admin"
+    };
+
+    chaiHttpResponse = await chai
+      .request(app)
+      .post('/login')
+      .send({ ...validUser })
+    
+    expect(chaiHttpResponse).to.have.status(200);
+    expect(chaiHttpResponse.body).to.haveOwnProperty('token');
+  });
+
+  it('deve ser retornado um status de 400 caso nenhum usuario seja fornecido', async () => {
+    const invalidUser = {
+      password: "any password"
+    };
+
+    chaiHttpResponse = await chai
+      .request(app)
+      .post('/login')
+      .send({ ...invalidUser })
+    
+    expect(chaiHttpResponse).to.have.status(400);
+    expect(chaiHttpResponse.body).to.haveOwnProperty('message');
+    expect(chaiHttpResponse.body.message).to.be.eq('All fields must be filled');
+  });
+
+  it('deve ser retornado um status de 400 caso nenhuma senha seja fornecida', async () => {
+    const invalidUser = {
+      username: "any user"
+    };
+
+    chaiHttpResponse = await chai
+      .request(app)
+      .post('/login')
+      .send({ ...invalidUser })
+    
+    expect(chaiHttpResponse).to.have.status(400);
+    expect(chaiHttpResponse.body).to.haveOwnProperty('message');
+    expect(chaiHttpResponse.body.message).to.be.eq('All fields must be filled');
+  });
+
+  it('deve ser retornado um status de 401 caso nenhum usuario seja encontrado', async () => {
+    (User.findOne as sinon.SinonStub).restore();
+    sinon
+      .stub(User, "findOne")
+      .resolves(null);
+
+    const validUser = {
+      username: "not a user",
+      password: "secret_admin"
+    };
+
+    chaiHttpResponse = await chai
+      .request(app)
+      .post('/login')
+      .send({ ...validUser })
+    
+    expect(chaiHttpResponse).to.have.status(401);
+    expect(chaiHttpResponse.body).to.haveOwnProperty('message');
+    expect(chaiHttpResponse.body.message).to.be.eq('Incorrect email or password');
+  });
+
+  it('deve ser retornado um status de 401 caso a senha informada não esteja correta', async () => {
+    const validUser = {
+      username: "correct_user",
+      password: "incorrect_password"
+    };
+
+    chaiHttpResponse = await chai
+      .request(app)
+      .post('/login')
+      .send({ ...validUser })
+    
+    expect(chaiHttpResponse).to.have.status(401);
+    expect(chaiHttpResponse.body).to.haveOwnProperty('message');
+    expect(chaiHttpResponse.body.message).to.be.eq('Incorrect email or password');
+  });
+});

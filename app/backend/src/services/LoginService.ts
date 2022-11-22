@@ -1,0 +1,38 @@
+import * as jwt from 'jsonwebtoken';
+import * as bcrypt from 'bcryptjs';
+import User from '../database/models/User';
+import ErrorMap from '../utils/errorMap';
+
+interface IServiceResponse {
+  type: ErrorMap | null,
+  message: string
+}
+
+class LoginService {
+  private static createToken(userId: number): string {
+    const token = jwt.sign({ data: { id: userId } }, process.env.JWT_SECRET as string);
+    return token;
+  }
+
+  static async login(username: string, password: string): Promise<IServiceResponse> {
+    if (!username || !password) {
+      return { type: ErrorMap.BAD_REQUEST, message: 'All fields must be filled' };
+    }
+
+    const user = await User.findOne({ where: { username } });
+    if (!user) {
+      return { type: ErrorMap.UNAUTHORIZED, message: 'Incorrect email or password' };
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return { type: ErrorMap.UNAUTHORIZED, message: 'Incorrect email or password' };
+    }
+
+    const token = LoginService.createToken(user.id);
+
+    return { type: null, message: token };
+  }
+}
+
+export default LoginService;
