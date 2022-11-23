@@ -49,6 +49,10 @@ class MatchesService {
 
     return { type: null, message: match };
   }
+
+  static async finishGame(id: string): Promise<void> {
+    await Match.update({ inProgress: false }, { where: { id } });
+  }
 }
 
 export default MatchesService;

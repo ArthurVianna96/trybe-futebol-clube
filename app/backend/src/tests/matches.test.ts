@@ -183,4 +183,23 @@ describe('Teste das rotas de matches', () => {
     });
   });
 
+  describe('Rotas PATCH', () => {
+    it('deve retornar um status 200 e terminar uma partida com exito caso a rota PATCH /matches/:id/finish', async () => {
+      const mockId = 5;
+      sinon
+        .stub(Match, 'update')
+        .resolves([1]);
+      
+      chaiHttpResponse = await chai
+        .request(app)
+        .patch(`/matches/${5}/finish`);
+
+      expect(chaiHttpResponse).to.have.status(200);
+      expect(chaiHttpResponse.body).to.haveOwnProperty('message');
+      expect(chaiHttpResponse.body.message).to.be.eq('Finished');
+
+      (Match.update as sinon.SinonStub).restore();
+    });
+  });
+
 });

@@ -18,6 +18,12 @@ class MatchesController {
 
     return res.status(201).json(message);
   }
+
+  static async finishGame(req: Request, res: Response) {
+    const { id } = req.params;
+    await MatchesService.finishGame(id);
+    return res.status(200).json({ message: 'Finished' });
+  }
 }
 
 export default MatchesController;
