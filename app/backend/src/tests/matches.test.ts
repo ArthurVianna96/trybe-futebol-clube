@@ -21,6 +21,7 @@ const { expect } = chai;
 
 describe('Teste das rotas de matches', () => {
   let chaiHttpResponse: Response;
+  const validToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImlkIjoxfSwiaWF0IjoxNjY5MTU3ODI1fQ.6sbiQCzjvJzGdpvxKjwFbEAKD5xwORbPCP7fhf2pvro';
 
   describe('Rotas GET', () => {
     it('deve retornar um status de 200 e todas as partidas cadastradas quando a rota GET /matches é chamada', async () => {
@@ -92,6 +93,7 @@ describe('Teste das rotas de matches', () => {
       chaiHttpResponse = await chai
         .request(app)
         .post('/matches')
+        .set('authorization', validToken)
         .send(createMatchRequest);
 
       expect(chaiHttpResponse).to.have.status(201);
@@ -173,6 +175,7 @@ describe('Teste das rotas de matches', () => {
       chaiHttpResponse = await chai
         .request(app)
         .post('/matches')
+        .set('authorization', validToken)
         .send(createMatchRequest);
 
       expect(chaiHttpResponse).to.have.status(404);

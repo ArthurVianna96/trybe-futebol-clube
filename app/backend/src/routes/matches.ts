@@ -1,6 +1,7 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import ValidateCreation from '../middlewares/ValidateMatchCreation';
 import MatchesController from '../controllers/MatchesController';
+import VerifyToken from '../middlewares/VerifyToken';
 
 const matches = Router();
 
@@ -8,6 +9,7 @@ matches.get('/', (req: Request, res: Response) => MatchesController.getAll(req, 
 matches.post(
   '/',
   (req: Request, res: Response, next: NextFunction) => ValidateCreation.validate(req, res, next),
+  (req: Request, res: Response, next: NextFunction) => VerifyToken.verify(req, res, next),
   (req: Request, res: Response) => MatchesController.add(req, res),
 );
 matches.patch(
