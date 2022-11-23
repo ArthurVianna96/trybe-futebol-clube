@@ -1,5 +1,5 @@
 import * as express from 'express';
-import { login, teams } from './routes';
+import { login, matches, teams } from './routes';
 
 class App {
   public app: express.Express;
@@ -13,6 +13,7 @@ class App {
     this.app.get('/', (req, res) => res.json({ ok: true }));
     this.app.use('/login', login);
     this.app.use('/teams', teams);
+    this.app.use('/matches', matches);
   }
 
   private config():void {
