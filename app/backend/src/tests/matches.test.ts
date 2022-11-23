@@ -188,20 +188,42 @@ describe('Teste das rotas de matches', () => {
 
   describe('Rotas PATCH', () => {
     it('deve retornar um status 200 e terminar uma partida com exito caso a rota PATCH /matches/:id/finish', async () => {
-      const mockId = 5;
+      const anyValidId = 5;
       sinon
         .stub(Match, 'update')
         .resolves([1]);
       
       chaiHttpResponse = await chai
         .request(app)
-        .patch(`/matches/${5}/finish`);
+        .patch(`/matches/${anyValidId}/finish`);
 
       expect(chaiHttpResponse).to.have.status(200);
       expect(chaiHttpResponse.body).to.haveOwnProperty('message');
       expect(chaiHttpResponse.body.message).to.be.eq('Finished');
 
       (Match.update as sinon.SinonStub).restore();
+    });
+
+    it('deve retornar um status 200 e as novas informações da partida quando a rota PATCH /matches/:id', async () => {
+      const anyValidId = 5;
+      sinon
+        .stub(Match, 'update')
+        .resolves([1]);
+
+      sinon
+        .stub(Match, 'findByPk')
+        .resolves(matchesMocks.updatedMatch as IMatchResponse);
+      
+      chaiHttpResponse = await chai
+        .request(app)
+        .patch(`/matches/${anyValidId}`);
+
+      expect(chaiHttpResponse).to.have.status(200);
+      expect(chaiHttpResponse.body).to.be.an('object');
+      expect(chaiHttpResponse.body).to.be.deep.eq(matchesMocks.updatedMatch);
+
+      (Match.update as sinon.SinonStub).restore();
+      (Match.findByPk as sinon.SinonStub).restore();
     });
   });
 

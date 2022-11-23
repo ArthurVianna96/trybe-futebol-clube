@@ -16,5 +16,9 @@ matches.patch(
   '/:id/finish',
   (req: Request, res: Response) => MatchesController.finishGame(req, res),
 );
+matches.patch(
+  '/:id',
+  (req: Request, res: Response) => MatchesController.updateGame(req, res),
+);
 
 export default matches;
