@@ -3,7 +3,7 @@ import Match from '../database/models/Match';
 import IMatchResponse from '../interfaces/IMatchResponse';
 
 class MatchesService {
-  static async getAll(): Promise<IMatchResponse[]> {
+  static async getAll(inProgressQuery: string): Promise<IMatchResponse[]> {
     const matches = await Match.findAll({
       include: [{
         model: Team,
@@ -15,6 +15,12 @@ class MatchesService {
         attributes: ['teamName'],
       }],
     });
+    if (inProgressQuery === 'false') {
+      return matches.filter(({ inProgress }) => !inProgress) as IMatchResponse[];
+    }
+    if (inProgressQuery === 'true') {
+      return matches.filter(({ inProgress }) => inProgress) as IMatchResponse[];
+    }
     return matches as IMatchResponse[];
   }
 }
