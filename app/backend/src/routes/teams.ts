@@ -4,5 +4,6 @@ import TeamsController from '../controllers/TeamsController';
 const teams = Router();
 
 teams.get('/', (req: Request, res: Response) => TeamsController.getAll(req, res));
+teams.get('/:id', (req: Request, res: Response) => TeamsController.getTeam(req, res));
 
 export default teams;
