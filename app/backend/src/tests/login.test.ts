@@ -15,7 +15,7 @@ const { app } = new App();
 
 const { expect } = chai;
 
-describe('Seu teste', () => {
+describe('Testes da rota de login', () => {
   let chaiHttpResponse: Response;
 
   before(async () => {
