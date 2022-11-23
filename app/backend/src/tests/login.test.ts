@@ -109,4 +109,31 @@ describe('Seu teste', () => {
     expect(chaiHttpResponse.body).to.haveOwnProperty('message');
     expect(chaiHttpResponse.body.message).to.be.eq('Incorrect email or password');
   });
+
+  it('deve ser retornado um status 200 e um perfil', async () => {
+    const validToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImlkIjoxfSwiaWF0IjoxNjY5MTU3ODI1fQ.6sbiQCzjvJzGdpvxKjwFbEAKD5xwORbPCP7fhf2pvro';
+    sinon
+      .stub(User, "findByPk")
+      .resolves({ role: 'admin' } as User);
+    
+    chaiHttpResponse = await chai
+    .request(app)
+    .get('/login/validate')
+    .set('authorization', validToken)
+    
+    expect(chaiHttpResponse).to.have.status(200);
+    expect(chaiHttpResponse.body).to.haveOwnProperty('role');
+    expect(chaiHttpResponse.body.role).to.be.eq('admin');
+    (User.findByPk as sinon.SinonStub).restore();
+  });
+
+  it('deve ser retornado um status 401 caso um token não seja fornecido', async () => {
+    chaiHttpResponse = await chai
+    .request(app)
+    .get('/login/validate')
+    
+    expect(chaiHttpResponse).to.have.status(401);
+    expect(chaiHttpResponse.body).to.haveOwnProperty('message');
+    expect(chaiHttpResponse.body.message).to.be.eq('token not provided');
+  });
 });
