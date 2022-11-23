@@ -1,6 +1,8 @@
 import Team from '../database/models/Team';
 import Match from '../database/models/Match';
 import IMatchResponse from '../interfaces/IMatchResponse';
+import IMatchCreationRequest from '../interfaces/IMatchCreationRequest';
+import ErrorMap from '../utils/errorMap';
 
 class MatchesService {
   static async getAll(inProgressQuery: string): Promise<IMatchResponse[]> {
@@ -22,6 +24,30 @@ class MatchesService {
       return matches.filter(({ inProgress }) => inProgress) as IMatchResponse[];
     }
     return matches as IMatchResponse[];
+  }
+
+  private static async checkTeams(teams: number[]): Promise<boolean> {
+    const promises = teams.map(async (teamId) => Team.findByPk(teamId));
+    const results = await Promise.all(promises);
+    return results.every((result) => result);
+  }
+
+  static async add(creationInfo: IMatchCreationRequest) {
+    const { homeTeam, awayTeam, homeTeamGoals, awayTeamGoals } = creationInfo;
+    const doTeamsExist = await MatchesService.checkTeams([homeTeam, awayTeam]);
+    if (!doTeamsExist) {
+      return { type: ErrorMap.NOT_FOUND, message: 'There is no team with such id!' };
+    }
+
+    const match = await Match.create({
+      homeTeam,
+      homeTeamGoals,
+      awayTeam,
+      awayTeamGoals,
+      inProgress: true,
+    });
+
+    return { type: null, message: match };
   }
 }
 
