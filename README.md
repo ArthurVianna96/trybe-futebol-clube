@@ -9,6 +9,7 @@ Olá. Bem vindo ao projeto Trybe Futebol Clube (TFC). Este projeto do módulo de
 - Desenvolvimento de API seguindo os padrões REST 
 - Paradigma de Programação Orientada a Objetos (P.O.O) e padrão S.O.L.I.D
 - Implementação de testes de Integração
+- Metodologia TDD (Teste Driven Development)
 
 ## 🛠️ Linguagens, Ferramentas e Bibliotecas Utilizadas
 -   [Node.js](https://nodejs.org/en/);
